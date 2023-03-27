@@ -1,0 +1,54 @@
+<script setup>
+import { ref, watchEffect } from 'vue'
+
+const props = defineProps({
+modelValue: {
+   type: Object,
+   required: false,
+   default: () => {
+   return {
+    <% for (const arg of attributes) { %>
+      <%= arg %>: '',
+    <% } %>
+   }
+   }
+}
+})
+
+const emit = defineEmits([
+   'submit'
+])
+
+const form = ref({})
+
+watchEffect(() => {
+JSON.parse(JSON.stringify(props.modelValue))
+})
+
+const handleSubmit = () => {
+emit('submit', form.value)
+}
+
+</script>
+
+<template>
+<q-form @submit="handleSubmit">
+   <q-card-section class="q-pa-none">
+    <% for (const arg of attributes) { %>
+      <q-input
+        label="<%= arg %>"
+        v-model="form.<%= arg %>"
+        placeholder="Type <%= arg %>"
+        type="text"
+        :rules="[(val) => !!val || 'Field is required']"
+      />
+    <% } %>
+   </q-card-section>
+   <q-card-actions
+     class="q-pa-none"
+     align="right"
+   >
+     <slot name="action"/>
+   </q-card-actions>
+</q-form>
+</template>

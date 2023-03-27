@@ -1,0 +1,18 @@
+{
+  "name": "itc-code-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "node index"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "fs-extra": "^11.1.0",
+    "yargs-parser": "^21.1.1"
+  }
+}
