@@ -1,0 +1,35 @@
+import Api from 'services/<%=entityName %>Service'
+
+export default {
+  async getAll (payload) {
+    try {
+      const { data: { data } } = await Api.getAll(payload)
+      this.<%=entityName %>s = data
+    } catch (error) {}
+  },
+  async getById (payload) {
+    try {
+      const { data: { data } } = await Api.getById(payload)
+      this.<%=entityName %> = data
+    } catch (error) {}
+  },
+  async create (payload) {
+    try {
+      const { data } = await Api.create(payload)
+      this.<%=entityName %>s.push(data)
+    } catch (error) {}
+  },
+  async update (id, payload) {
+    try {
+      const { data } = await Api.update(id, payload)
+      const index = this.<%=entityName %>s.findIndex((<%=entityName %>) => <%=entityName %>.id === id)
+      this.<%=entityName %>s[index] = data
+    } catch (error) {}
+  },
+  async deleteById (id) {
+    try {
+      await Api.deleteById(id)
+      this.<%=entityName %>s = this.<%=entityName %>s.filter(<%=entityName %> => <%=entityName %>.id !== id)
+    } catch (error) {}
+  }
+}

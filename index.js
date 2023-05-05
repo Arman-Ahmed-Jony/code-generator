@@ -19,13 +19,19 @@ const main = () => {
     entityJsonFiles.forEach(entityJsonFile => { 
       const entityName = path.parse(entityJsonFile).name
 
-      const generatedEntityForm = path.join(__dirname, `./generated/${entityName}Form.vue`)
-      const generatedEntityList = path.join(__dirname, `./generated/${entityName}List.vue`)
-      const generatedEntityApi = path.join(__dirname, `./generated/${entityName}Api.js`)
+      const generatedEntityForm = path.join(__dirname, `./generated/${entityName}/components/${entityName}Form.vue`)
+      const generatedEntityList = path.join(__dirname, `./generated/${entityName}/components/${entityName}List.vue`)
+      const generatedEntityCrudIndex = path.join(__dirname, `./generated/${entityName}/pages/${entityName}Index.vue`)
+      const generatedEntityApi = path.join(__dirname, `./generated/services/${entityName}Service.js`)
+      const generatedEntityAction = path.join(__dirname, `./generated/stores/${entityName}-store/action.js`)
+      const generatedStoreIndex = path.join(__dirname, `./generated/stores/${entityName}-store/index.js`)
 
       const formTemplate = path.join(__dirname, `./templates/form.ejs`)
       const listTemplate = path.join(__dirname, `./templates/list.ejs`)
-      const ApiTemplate = path.join(__dirname, `./templates/api.ejs`)
+      const apiTemplate = path.join(__dirname, `./templates/api.ejs`)
+      const actionTemplate = path.join(__dirname, `./templates/action.ejs`)
+      const storeIndexTemplate = path.join(__dirname, `./templates/storeIndex.ejs`)
+      const CrudIndexTemplate = path.join(__dirname, `./templates/crudIndex.ejs`)
 
       
 
@@ -49,12 +55,26 @@ const main = () => {
           fs.ensureFileSync(generatedEntityList)
           fs.outputFileSync(generatedEntityList, str)
         })
-        ejs.renderFile(ApiTemplate, data, options, function (err, str) {
+        ejs.renderFile(apiTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityApi)
           fs.outputFileSync(generatedEntityApi, str)
         })
-        
+        ejs.renderFile(actionTemplate, data, options, function (err, str) {
+          if (err) throw err;
+          fs.ensureFileSync(generatedEntityAction)
+          fs.outputFileSync(generatedEntityAction, str)
+        })
+        ejs.renderFile(storeIndexTemplate, data, options, function (err, str) {
+          if (err) throw err;
+          fs.ensureFileSync(generatedStoreIndex)
+          fs.outputFileSync(generatedStoreIndex, str)
+        })
+        ejs.renderFile(CrudIndexTemplate, data, options, function (err, str) {
+          if (err) throw err;
+          fs.ensureFileSync(generatedEntityCrudIndex)
+          fs.outputFileSync(generatedEntityCrudIndex, str)
+        })
       })
     })
 
