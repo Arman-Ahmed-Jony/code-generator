@@ -9,6 +9,8 @@ import figlet from 'figlet'
 import * as url from 'url';
 import { createSpinner } from "nanospinner";
 import chalk from "chalk";
+import chalkAnimation from "chalk-animation";
+
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const argv = yargsParser(process.argv.slice(2))
@@ -105,10 +107,28 @@ const generateEntityJson = async() => {
 
 const greetings = async () => {
   console.clear()
-  const msg = 'dev.john'
-  return await figlet(msg, (err, data)=> {
-    console.log(gradient.pastel.multiline(data))
-  })
+  const ascii =
+    `
+    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.
+    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@.
+    %@@@@@@@@@@@@@@@@%@@@@@@@@@@@@@@.
+    %@@@@@@@@@@%*+-.          ....::
+    %@@@@@@@@@@@%%##**++==-::..            *# *######-     -+=+=   :+++=   .=:   =   .=++=:   =    -: .=====. .=+++:.=======
+    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@%.      %@   .@%      .%-   .. %+   :%- -%%-  @. =%:  .** .@    *= :@      @-   .   .@
+    %@@@@@#+-. .::-==+**#%%@@@@@@@@@.      %@   .@%      **      -@     +# -# %= @. @-     @..@    *= :@++++  =***=.   .@
+    %@@@@%#*+=-:.             ..:-#@.      %@   .@%      =%      .@:    #+ -#  #=@. #*    -% .@    %= :@          =@   .@
+    %@@@@@@@@@@@@@@#*+=-:.    .=#@@@.      #%   .%#       -*++++: .*+++*=  -*   #@.  +*++#*.  -*++*+  :@++++: *+++*=   .@
+    ==:   .-=+#%@@@@@@@@@@@@%%@@@@@@.                                                    ==
+    *+-.         .:-+*#@@@@@@@@@@@@@.
+    %@@@@#+-.            -#@@@@@@@@@.
+    %@@@@@@@@@#+-.   :+#@@@@@@@@@@@@.
+    %@@@@@@@@@@@@@@%@@@@@@@@@@@@@@@#
+    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@#:
+    %@@@@@@@@@@@@@@@@@@@@@@@@@@#:
+
+    `
+  console.log(ascii)
+  console.log(`Developed by ${chalk.green.underline.bold('Arman Ahmed')}\n\n`)
 }
 
 
