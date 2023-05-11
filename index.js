@@ -8,7 +8,7 @@ const main = () => {
   console.log("Generating template...")
   try {
     const workingDir = path.join(process.cwd()) // in developemnt use 'generated'
-    console.log("current working directory: " + workingDir);
+    console.log("current working directory: " + workingDir, __dirname);
     const { _: entities } = argv
     const options = {}
     if (!entities.length>0) {
@@ -17,6 +17,7 @@ const main = () => {
     }
 
     const entityJsonFiles = entities.map(entity => path.join(workingDir, `./entity/${entity}.json`))
+    console.log('entity json files', entityJsonFiles);
 
     entityJsonFiles.forEach(entityJsonFile => {
       const entityName = path.parse(entityJsonFile).name
