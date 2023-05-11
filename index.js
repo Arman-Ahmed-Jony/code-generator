@@ -1,25 +1,112 @@
 #!/usr/bin/env node
-const fs = require("fs-extra")
-const ejs = require("ejs")
-const argv = require("yargs-parser")(process.argv.slice(2))
-const path = require("path")
+import inquirer from "inquirer";
+import fs from 'fs-extra'
+import ejs from 'ejs'
+import yargsParser from "yargs-parser";
+import path from "path";
+import * as url from 'url';
 
-const main = () => {
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const argv = yargsParser(process.argv.slice(2))
+const workingDir = path.join(process.cwd()) // in developemnt use 'generated'
+
+
+const entityDefinition = {
+  name: "",
+  fields: {
+    // "name": {
+    //   "type": "text", // or number, date etc
+    //   "required": true
+    // }
+  }
+}
+
+const getEntityName = async () => {
+  const answers = await inquirer.prompt({
+    name: 'entity_name',
+    type: 'text',
+    message: "what is the name of the entity?",
+    default(){
+      return 'entity'
+    }
+  })
+  entityDefinition.name = answers.entity_name
+  return entityDefinition
+}
+
+const wantTogetMoreFields = async () => {
+  const answer = await inquirer.prompt({
+    name: 'wantToAddMoreFields',
+    type: 'confirm',
+    message: 'do you want to add another field?',
+    default: true
+  })
+  return answer.wantToAddMoreFields
+}
+
+const getFields = async () => {
+  const answers = await inquirer.prompt([
+    {
+      name: 'name',
+      type: 'text',
+      message: "what is the name of the field?",
+    },
+    {
+      name: 'type',
+      type: 'list',
+      message: 'what type is it?',
+      choices: [
+        'text',
+        'number (currently not supported)',
+        'email (currently not supported)',
+        'date (currently not supported)',
+        'password (currently not supported)',
+      ],
+      default: 'text',
+    },
+    {
+      name: 'required',
+      type: 'list',
+      message: 'is it a required field?',
+      choices: [
+        'true',
+        'false'
+      ],
+      default: true
+    },
+  ])
+  entityDefinition.fields[`${answers.name}`] = {type: answers.type, required: answers.required}
+  if(await wantTogetMoreFields()){
+    await getFields()
+  }else{
+    return entityDefinition
+  }
+}
+
+const generateEntityJson = () => {
+  fs.outputFileSync(path.join(workingDir,`./entities/${entityDefinition.name}.json`), JSON.stringify(entityDefinition.fields))
+}
+
+const main = async () => {
+  await getEntityName()
+  await getFields()
+  await generateEntityJson()
+
   console.log("Generating template...")
   try {
-    const workingDir = path.join(process.cwd()) // in developemnt use 'generated'
-    console.log("current working directory: " + workingDir, __dirname);
-    const { _: entities } = argv
+    // console.log("current working directory: " + workingDir, __dirname);
+    // const { _: entities } = argv
     const options = {}
-    if (!entities.length>0) {
-      console.error("please provide entities that to be generated. :(")
-      process.exit(1)
-    }
+    // if (!entities.length>0) {
+    //   console.error("please provide entities that to be generated. :(")
+    //   process.exit(1)
+    // }
 
-    const entityJsonFiles = entities.map(entity => path.join(workingDir, `./entity/${entity}.json`))
-    console.log('entity json files', entityJsonFiles);
+    // const entityJsonFiles = entities.map(entity => path.join(workingDir, `./entities/${entity}.json`))
+    // console.log('entity json file', entityJsonFiles);
 
-    entityJsonFiles.forEach(entityJsonFile => {
+    // entityJsonFiles.forEach(entityJsonFile => {
+      const entityJsonFile = path.join(workingDir, `./entities/${entityDefinition.name}.json`)
       const entityName = path.parse(entityJsonFile).name
 
       const generatedEntityForm = path.join(workingDir, `./src/modules/${entityName}s/components/${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}Form.vue`)
@@ -38,8 +125,6 @@ const main = () => {
       const storeIndexTemplate = path.join(__dirname, `./templates/storeIndex.ejs`)
       const CrudIndexTemplate = path.join(__dirname, `./templates/crudIndex.ejs`)
       const routesTemplate = path.join(__dirname, `./templates/routes.ejs`)
-
-
 
       fs.readFile(entityJsonFile, "utf8", function (err, fileContent) {
 
@@ -88,7 +173,7 @@ const main = () => {
         })
         fs.outputFileSync(generatedTemplateIndex,'export { default as routes } from \'./routes\'\n')
       })
-    })
+    // })
 
 
   } catch (err) {
