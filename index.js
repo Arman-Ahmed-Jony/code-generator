@@ -4,12 +4,9 @@ import fs from 'fs-extra'
 import ejs from 'ejs'
 import yargsParser from "yargs-parser";
 import path from "path";
-import gradient from "gradient-string";
-import figlet from 'figlet'
 import * as url from 'url';
 import { createSpinner } from "nanospinner";
 import chalk from "chalk";
-import chalkAnimation from "chalk-animation";
 
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
