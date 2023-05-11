@@ -15,13 +15,13 @@ export default {
   },
   async create (payload) {
     try {
-      const { data } = await Api.create(payload)
+      const { data: { data } } = await Api.create(payload)
       this.<%=entityName %>s.push(data)
     } catch (error) {}
   },
   async update (id, payload) {
     try {
-      const { data } = await Api.update(id, payload)
+      const { data: { data } } = await Api.update(id, payload)
       const index = this.<%=entityName %>s.findIndex((<%=entityName %>) => <%=entityName %>.id === id)
       this.<%=entityName %>s[index] = data
     } catch (error) {}

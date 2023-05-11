@@ -1,16 +1,22 @@
 <script setup>
-import { useStore } from 'src/stores/<%=entityName %>-store'
+import { use<%=entityName.replace(/\w/, c => c.toUpperCase())%>Store } from 'src/stores/<%=entityName %>-store'
 import { computed, onMounted, ref } from 'vue'
-import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form from '../components/<%=entityName %>Form.vue'
-import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>List from '../components/<%=entityName %>List.vue'
+import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form from '../components/<%=entityName.replace(/\w/, c => c.toUpperCase())%>Form.vue'
+import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>List from '../components/<%=entityName.replace(/\w/, c => c.toUpperCase())%>List.vue'
+import { useCommonStore } from 'src/stores/common-store'
+import { useBackButton } from 'src/composables/backButton'
 
+useBackButton()
+
+const commonStore = useCommonStore()
 const createDialog = ref(false)
 const editDialog = ref(false)
 
 const <%=entityName %>Store = use<%=entityName.replace(/\w/, c => c.toUpperCase())%>Store()
 const <%=entityName %>s = computed(() => <%=entityName %>Store.<%=entityName %>s)
+
 onMounted(() => {
-    <%=entityName %>Store.getAll()
+  <%=entityName %>Store.getAll()
 })
 
 const handleCreate = async (data) => {
@@ -35,12 +41,15 @@ const handleDelete = (id) => {
 </script>
 <template>
   <q-page padding>
-    <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>List
-      v-model="stateName"
-      @view="handleView"
-      @edit="editDialog=true, selected<%=entityName.replace(/\w/, c => c.toUpperCase())%> = $event"
-      @delete="handleDelete"
-    />
+    <content-loader :loading="commonStore.fetching">
+      <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>List
+        v-model="<%=entityName %>s"
+        @view="handleView"
+        @edit="editDialog=true, selected<%=entityName.replace(/\w/, c => c.toUpperCase())%> = $event"
+        @delete="handleDelete"
+      />
+    </content-loader>
+
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"
@@ -55,6 +64,7 @@ const handleDelete = (id) => {
         @click="createDialog = true"
       />
     </q-page-sticky>
+
     <q-dialog v-model="createDialog">
       <q-card
         style="width: 700px;"
@@ -64,14 +74,14 @@ const handleDelete = (id) => {
           <template #action>
             <div class="row justify-end">
               <q-btn
-               color="primary"
+                color="primary"
                 label="Create"
                 type="submit"
                 no-caps
               />
             </div>
           </template>
-        <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form/>
+        </<%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form>
       </q-card>
     </q-dialog>
     <q-dialog v-model="editDialog">
@@ -81,7 +91,7 @@ const handleDelete = (id) => {
       >
         <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form
           @submit="handleEdit"
-          :data="selected<%=entityName.replace(/\w/, c => c.toUpperCase())%>"
+          :model-value="selected<%=entityName.replace(/\w/, c => c.toUpperCase())%>"
         >
           <template #action>
             <div class="row justify-end">

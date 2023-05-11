@@ -5,7 +5,7 @@ export default [
     children: [
       {
         path: '<%=entityName %>s',
-        component: () => import('./pages/<%=entityName.replace(/\w/, c => c.toUpperCase())%>sIndex.vue'),
+        component: () => import('./pages/<%=entityName.replace(/\w/, c => c.toUpperCase())%>Index.vue'),
         name: '<%=entityName %>s',
         meta: {
           help_key: '<%=entityName %>s',

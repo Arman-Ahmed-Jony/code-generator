@@ -7,27 +7,28 @@ const path = require("path")
 const main = () => {
   console.log("Generating template...")
   try {
+    const workingDir = path.join(process.cwd()) // in developemnt use 'generated'
+    console.log("current working directory: " + workingDir);
     const { _: entities } = argv
-
     const options = {}
     if (!entities.length>0) {
       console.error("please provide entities that to be generated. :(")
       process.exit(1)
     }
 
-    const entityJsonFiles = entities.map(entity => path.join(__dirname, `./entity/${entity}.json`))
+    const entityJsonFiles = entities.map(entity => path.join(workingDir, `./entity/${entity}.json`))
 
     entityJsonFiles.forEach(entityJsonFile => {
       const entityName = path.parse(entityJsonFile).name
 
-      const generatedEntityForm = path.join(__dirname, `./generated/${entityName}s/components/${entityName}Form.vue`)
-      const generatedEntityList = path.join(__dirname, `./generated/${entityName}s/components/${entityName}List.vue`)
-      const generatedEntityCrudIndex = path.join(__dirname, `./generated/${entityName}s/pages/${entityName}Index.vue`)
-      const generatedEntityApi = path.join(__dirname, `./generated/services/${entityName}Service.js`)
-      const generatedEntityAction = path.join(__dirname, `./generated/stores/${entityName}-store/actions.js`)
-      const generatedStoreIndex = path.join(__dirname, `./generated/stores/${entityName}-store/index.js`)
-      const generatedRoutes = path.join(__dirname, `./generated/${entityName}s/routes.js`)
-      const generatedTemplateIndex = path.join(__dirname, `./generated/${entityName}s/index.js`)
+      const generatedEntityForm = path.join(workingDir, `./src/modules/${entityName}s/components/${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}Form.vue`)
+      const generatedEntityList = path.join(workingDir, `./src/modules/${entityName}s/components/${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}List.vue`)
+      const generatedEntityCrudIndex = path.join(workingDir, `./src/modules/${entityName}s/pages/${entityName.charAt(0).toUpperCase()}${entityName.slice(1)}Index.vue`)
+      const generatedEntityApi = path.join(workingDir, `./src/services/${entityName}Service.js`)
+      const generatedEntityAction = path.join(workingDir, `./src/stores/${entityName}-store/actions.js`)
+      const generatedStoreIndex = path.join(workingDir, `./src/stores/${entityName}-store/index.js`)
+      const generatedRoutes = path.join(workingDir, `./src/modules/${entityName}s/routes.js`)
+      const generatedTemplateIndex = path.join(workingDir, `./src/modules/${entityName}s/index.js`)
 
       const formTemplate = path.join(__dirname, `./templates/form.ejs`)
       const listTemplate = path.join(__dirname, `./templates/list.ejs`)
