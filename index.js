@@ -4,7 +4,11 @@ import fs from 'fs-extra'
 import ejs from 'ejs'
 import yargsParser from "yargs-parser";
 import path from "path";
+import gradient from "gradient-string";
+import figlet from 'figlet'
 import * as url from 'url';
+import { createSpinner } from "nanospinner";
+import chalk from "chalk";
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const argv = yargsParser(process.argv.slice(2))
@@ -15,13 +19,15 @@ const entityDefinition = {
   name: "",
   fields: {
     // "name": {
-    //   "type": "text", // or number, date etc
-    //   "required": true
-    // }
+      //   "type": "text", // or number, date etc
+      //   "required": true
+      // }
+    }
   }
-}
 
-const getEntityName = async () => {
+  const sleep = (ms=2000) => new Promise((resolve) =>{ setTimeout(resolve, ms)})
+
+  const getEntityName = async () => {
   const answers = await inquirer.prompt({
     name: 'entity_name',
     type: 'text',
@@ -83,16 +89,36 @@ const getFields = async () => {
   }
 }
 
-const generateEntityJson = () => {
-  fs.outputFileSync(path.join(workingDir,`./entities/${entityDefinition.name}.json`), JSON.stringify(entityDefinition.fields))
+const generateEntityJson = async() => {
+  const spinner = createSpinner('generating entity json...').start();
+  await sleep()
+  try {
+    fs.outputFileSync(path.join(workingDir,`./entities/${entityDefinition.name}.json`), JSON.stringify(entityDefinition.fields))
+    spinner.success({
+      text:`entity json is generated successfully!!\n\n`
+    })
+    console.log(`${chalk.bgBlue('[Note]: ')} location of the entity file \n${path.join(workingDir,`./entities/${entityDefinition.name}.json`)}\n`)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
+const greetings = async () => {
+  console.clear()
+  const msg = 'dev.john'
+  return await figlet(msg, (err, data)=> {
+    console.log(gradient.pastel.multiline(data))
+  })
+}
+
+
 const main = async () => {
+  await greetings()
+  await sleep(1000)
   await getEntityName()
   await getFields()
   await generateEntityJson()
 
-  console.log("Generating template...")
   try {
     const options = {}
       const entityJsonFile = path.join(workingDir, `./entities/${entityDefinition.name}.json`)
@@ -129,42 +155,52 @@ const main = async () => {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityForm)
           fs.outputFileSync(generatedEntityForm, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the form component \n${generatedEntityForm}\n`)
         })
         ejs.renderFile(listTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityList)
           fs.outputFileSync(generatedEntityList, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the list component \n${generatedEntityList}\n`)
         })
         ejs.renderFile(apiTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityApi)
           fs.outputFileSync(generatedEntityApi, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the service file \n${generatedEntityApi}\n`)
         })
         ejs.renderFile(actionTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityAction)
           fs.outputFileSync(generatedEntityAction, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the action \n${generatedEntityAction}\n`)
         })
         ejs.renderFile(storeIndexTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedStoreIndex)
           fs.outputFileSync(generatedStoreIndex, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the store index \n${generatedStoreIndex}\n`)
         })
         ejs.renderFile(CrudIndexTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedEntityCrudIndex)
           fs.outputFileSync(generatedEntityCrudIndex, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the crud index template \n${generatedEntityCrudIndex}\n`)
         })
         ejs.renderFile(routesTemplate, data, options, function (err, str) {
           if (err) throw err;
           fs.ensureFileSync(generatedRoutes)
           fs.outputFileSync(generatedRoutes, str)
+          console.log(`${chalk.bgBlue('[Note]: ')} location of the routes.js \n${generatedRoutes}\n`)
         })
         fs.outputFileSync(generatedTemplateIndex,'export { default as routes } from \'./routes\'\n')
       })
-    // })
-
-
+      await sleep(1000)
+      const spinner = createSpinner('generating templates, store and service files...\n\n').start();
+      await sleep(1000)
+      spinner.success({
+        text:`templates, store and service files are generated successfully!!`
+      })
   } catch (err) {
     console.error(err)
   }
