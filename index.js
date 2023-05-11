@@ -94,18 +94,7 @@ const main = async () => {
 
   console.log("Generating template...")
   try {
-    // console.log("current working directory: " + workingDir, __dirname);
-    // const { _: entities } = argv
     const options = {}
-    // if (!entities.length>0) {
-    //   console.error("please provide entities that to be generated. :(")
-    //   process.exit(1)
-    // }
-
-    // const entityJsonFiles = entities.map(entity => path.join(workingDir, `./entities/${entity}.json`))
-    // console.log('entity json file', entityJsonFiles);
-
-    // entityJsonFiles.forEach(entityJsonFile => {
       const entityJsonFile = path.join(workingDir, `./entities/${entityDefinition.name}.json`)
       const entityName = path.parse(entityJsonFile).name
 
