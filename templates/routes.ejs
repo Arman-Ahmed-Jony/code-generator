@@ -1,0 +1,18 @@
+export default [
+  {
+    path: '/',
+    component: () => import('layouts/DefaultLayout.vue'),
+    children: [
+      {
+        path: '<%=entityName %>s',
+        component: () => import('./pages/<%=entityName.replace(/\w/, c => c.toUpperCase())%>sIndex.vue'),
+        name: '<%=entityName %>s',
+        meta: {
+          help_key: '<%=entityName %>s',
+          requiresAuth: false,
+          title: '<%=entityName.replace(/\w/, c => c.toUpperCase())%>s'
+        }
+      }
+    ]
+  }
+]

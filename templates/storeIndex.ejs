@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import actions from './actions'
 
-export const use<%=entityName %>Store = defineStore('<%=entityName %>s', {
+export const use<%=entityName.replace(/\w/, c => c.toUpperCase())%>Store = defineStore('<%=entityName %>s', {
   state: () => ({
     <%=entityName %>s: [],
     <%=entityName %>: {}

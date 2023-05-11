@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require("fs-extra")
 const ejs = require("ejs")
 const argv = require("yargs-parser")(process.argv.slice(2))
@@ -16,24 +17,27 @@ const main = () => {
 
     const entityJsonFiles = entities.map(entity => path.join(__dirname, `./entity/${entity}.json`))
 
-    entityJsonFiles.forEach(entityJsonFile => { 
+    entityJsonFiles.forEach(entityJsonFile => {
       const entityName = path.parse(entityJsonFile).name
 
-      const generatedEntityForm = path.join(__dirname, `./generated/${entityName}/components/${entityName}Form.vue`)
-      const generatedEntityList = path.join(__dirname, `./generated/${entityName}/components/${entityName}List.vue`)
-      const generatedEntityCrudIndex = path.join(__dirname, `./generated/${entityName}/pages/${entityName}Index.vue`)
+      const generatedEntityForm = path.join(__dirname, `./generated/${entityName}s/components/${entityName}Form.vue`)
+      const generatedEntityList = path.join(__dirname, `./generated/${entityName}s/components/${entityName}List.vue`)
+      const generatedEntityCrudIndex = path.join(__dirname, `./generated/${entityName}s/pages/${entityName}Index.vue`)
       const generatedEntityApi = path.join(__dirname, `./generated/services/${entityName}Service.js`)
-      const generatedEntityAction = path.join(__dirname, `./generated/stores/${entityName}-store/action.js`)
+      const generatedEntityAction = path.join(__dirname, `./generated/stores/${entityName}-store/actions.js`)
       const generatedStoreIndex = path.join(__dirname, `./generated/stores/${entityName}-store/index.js`)
+      const generatedRoutes = path.join(__dirname, `./generated/${entityName}s/routes.js`)
+      const generatedTemplateIndex = path.join(__dirname, `./generated/${entityName}s/index.js`)
 
       const formTemplate = path.join(__dirname, `./templates/form.ejs`)
       const listTemplate = path.join(__dirname, `./templates/list.ejs`)
       const apiTemplate = path.join(__dirname, `./templates/api.ejs`)
-      const actionTemplate = path.join(__dirname, `./templates/action.ejs`)
+      const actionTemplate = path.join(__dirname, `./templates/actions.ejs`)
       const storeIndexTemplate = path.join(__dirname, `./templates/storeIndex.ejs`)
       const CrudIndexTemplate = path.join(__dirname, `./templates/crudIndex.ejs`)
+      const routesTemplate = path.join(__dirname, `./templates/routes.ejs`)
 
-      
+
 
       fs.readFile(entityJsonFile, "utf8", function (err, fileContent) {
 
@@ -75,10 +79,16 @@ const main = () => {
           fs.ensureFileSync(generatedEntityCrudIndex)
           fs.outputFileSync(generatedEntityCrudIndex, str)
         })
+        ejs.renderFile(routesTemplate, data, options, function (err, str) {
+          if (err) throw err;
+          fs.ensureFileSync(generatedRoutes)
+          fs.outputFileSync(generatedRoutes, str)
+        })
+        fs.outputFileSync(generatedTemplateIndex,'export { default as routes } from \'./routes\'\n')
       })
     })
 
-    
+
   } catch (err) {
     console.error(err)
   }
