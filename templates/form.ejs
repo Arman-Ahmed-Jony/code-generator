@@ -1,5 +1,8 @@
 <script setup>
 import { ref, watchEffect } from 'vue'
+<% if (attributes.some(attr => attr.type === 'email') && attributes.filter(attr => attr.type === 'email').some(attr => attr.required)) { %>
+import { validateEmail } from 'utilities/validators'
+<% } %>
 
 const props = defineProps({
 modelValue: {
@@ -7,9 +10,9 @@ modelValue: {
    required: false,
    default: () => {
    return {
-    <% for (const arg of attributes) { %>
-      <%= arg %>: '',
-    <% } %>
+    <% for (const arg of attributes) { -%>
+      <%= arg.name %>: '',
+    <% } -%>
    }
    }
 }
@@ -34,18 +37,99 @@ emit('submit', form.value)
 <template>
 <q-form @submit="handleSubmit">
    <q-card-section class="q-pa-none">
-    <% for (const arg of attributes) { %>
+    <% for (const arg of attributes) { -%>
+      <% if(arg.type == 'text') { %>
       <q-input
-        label="<%= arg %>"
-        v-model="form.<%= arg %>"
-        placeholder="Type <%= arg %>"
+        label="<%= arg.name %>"
+        v-model="form.<%= arg.name %>"
+        placeholder="Type <%= arg.name %>"
         type="text"
+        <% if(arg.required) { %>
         :rules="[(val) => !!val || 'Field is required']"
+        <% }%>
       />
+      <% } -%>
+      <% if(arg.type == 'number') { %>
+      <q-input
+        v-model.number="form.<%= arg.name %>"
+        label="<%= arg.name %>"
+        placeholder="Type <%= arg.name %>"
+        type="number"
+        <% if(arg.required) { %>
+        :rules="[
+          val => !!val || 'Field is required'
+        ]"
+        <% } %>
+      />
+      <% } -%>
+      <% if(arg.type == 'email') { %>
+      <q-input
+        v-model="form.<%= arg.name %>"
+        label="<%= arg.name %>"
+        placeholder="Type <%= arg.name %>"
+        type="email"
+        <% if(arg.required) { %>
+        :rules="[
+          val => !val || validateEmail(val) || 'Type a valid Email'
+        ]"
+        <% } %>
+      />
+      <% } -%>
+      <% if(arg.type == 'date') { %>
+      <q-input
+        v-model="form.<%= arg.name %>"
+        label="<%= arg.name %>"
+        placeholder="Type <%= arg.name %>"
+        mask="date"
+        <% if(arg.required) { %>
+        :rules="[
+          'date',
+          (val) => !!val || 'Field is required'
+        ]"
+        <% } %>
+      >
+        <template #append>
+          <q-icon
+            name="o_event"
+            class="cursor-pointer"
+          >
+            <q-popup-proxy
+              cover
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date v-model="form.<%= arg.name %>">
+                <div class="row items-center justify-end">
+                  <q-btn
+                    v-close-popup
+                    label="Close"
+                    color="primary"
+                    flat
+                  />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <% } -%>
+      <% if(arg.type == 'password') { %>
+      <q-input
+        v-model="form.<%= arg.name %>"
+        label="<%= arg.name %>"
+        placeholder="Type <%= arg.name %>"
+        type="password"
+        <% if(arg.required) { %>
+          :rules="[
+            val => !!val || 'Field is required'
+          ]"
+        <% } %>
+      />
+      <% } -%>
     <% } %>
    </q-card-section>
    <q-card-actions
-     class="q-pa-none"
+     class="q-pa-none q-pt-sm"
      align="right"
    >
      <slot name="action"/>

@@ -21,9 +21,9 @@ defineEmits([
   >
   <q-item-section @click="$emit('view', <%=entityName %>)">
     <% for (const arg of attributes) { %>
-        {{ <%=entityName %>.<%= arg %> }}
-      <% } %>
-    
+        {{ <%=entityName %>.<%= arg.name %> }}
+    <% } %>
+
   </q-item-section>
   <q-item-section side>
     <OverflowMenu

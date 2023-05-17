@@ -62,10 +62,10 @@ const getFields = async () => {
       message: 'what type is it?',
       choices: [
         'text',
-        'number (currently not supported)',
-        'email (currently not supported)',
-        'date (currently not supported)',
-        'password (currently not supported)',
+        'number',
+        'email',
+        'date',
+        'password',
       ],
       default: 'text',
     },
@@ -80,7 +80,7 @@ const getFields = async () => {
       default: true
     },
   ])
-  entityDefinition.fields[`${answers.name}`] = {type: answers.type, required: answers.required}
+  entityDefinition.fields[`${answers.name}`] = {type: answers.type, required: answers.required === 'true' ? true : false }
   if(await wantTogetMoreFields()){
     await getFields()
   }else{
@@ -159,11 +159,20 @@ const main = async () => {
       const routesTemplate = path.join(__dirname, `./templates/routes.ejs`)
 
       fs.readFile(entityJsonFile, "utf8", function (err, fileContent) {
-
+        const parsedFileContent = JSON.parse(fileContent)
+        console.log(parsedFileContent, 'called file content: ')
         const data = {
-          attributes: Object.keys(JSON.parse(fileContent)),
+          attributes: Object.keys(parsedFileContent).map(item => {
+            // console.log('callweoif',{name: item,
+            //   ...parsedFileContent[`${item}`]}, parsedFileContent);
+            return {
+                name: item,
+                ...parsedFileContent[`${item}`]
+            }
+          }),
           entityName
         }
+        console.log(data, 'called data');
 
         if (err) throw err;
 
