@@ -160,7 +160,6 @@ const main = async () => {
 
       fs.readFile(entityJsonFile, "utf8", function (err, fileContent) {
         const parsedFileContent = JSON.parse(fileContent)
-        console.log(parsedFileContent, 'called file content: ')
         const data = {
           attributes: Object.keys(parsedFileContent).map(item => {
             // console.log('callweoif',{name: item,
@@ -172,7 +171,6 @@ const main = async () => {
           }),
           entityName
         }
-        console.log(data, 'called data');
 
         if (err) throw err;
 
