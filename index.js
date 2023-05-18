@@ -125,7 +125,6 @@ const greetings = async () => {
 
     `
   console.log(ascii)
-  // console.log(`Developed by ${chalk.green.underline.bold('Arman Ahmed')}\n\n`)
 }
 
 
