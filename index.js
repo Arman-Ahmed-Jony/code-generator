@@ -224,6 +224,8 @@ const main = async () => {
       spinner.success({
         text:`templates, store and service files are generated successfully!!`
       })
+
+      console.log(`\n${chalk.bgBlue('[Note]: ')} please add your module into routes.js and run: \nnpm run lint:fix \n`)
   } catch (err) {
     console.error(err)
   }
