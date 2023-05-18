@@ -1,5 +1,5 @@
 {
-  "name": "itc-code-generator",
+  "name": "itc-crud",
   "version": "1.3.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "generate": "node index"
   },
   "keywords": [],
-  "author": "",
+  "author": "armanahmedjony786@gmail.com",
   "type": "module",
   "license": "ISC",
   "bin": "index.js",
