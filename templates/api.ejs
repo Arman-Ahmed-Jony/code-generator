@@ -1,10 +1,12 @@
 import client from './client'
+import { objectToApiQuaryString } from 'src/utilities/methods'
+
 
 const RESOURCE_NAME = '<%=entityName %>s'
 
 export default {
-  getAll () {
-    return client().get(RESOURCE_NAME)
+  getAll (criteria={}) {
+    return client().get(`${RESOURCE_NAME}${objectToApiQuaryString(criteria)}`)
   },
   getById (id) {
     return client().get(`${RESOURCE_NAME}/${id}`)

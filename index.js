@@ -41,7 +41,6 @@ const getEntityName = async () => {
   ]);
   entityDefinition.name = answers.entity_name;
   entityDefinition.aditionals = answers.aditionals;
-  console.log(entityDefinition);
   return entityDefinition;
 };
 
@@ -112,7 +111,6 @@ const generateEntityJson = async () => {
 
 const greetings = async () => {
   console.clear();
-
   console.log(companyASCII);
 };
 
@@ -125,11 +123,7 @@ const main = async () => {
 
   try {
     const options = {};
-    const entityJsonFile = path.join(
-      workingDir,
-      `./entities/${entityDefinition.name}.json`
-    );
-    const entityName = path.parse(entityJsonFile).name;
+    const entityName = entityDefinition.name;
 
     const generatedEntityForm = path.join(
       workingDir,
@@ -181,103 +175,98 @@ const main = async () => {
     const CrudIndexTemplate = path.join(__dirname, `./templates/crudIndex.ejs`);
     const routesTemplate = path.join(__dirname, `./templates/routes.ejs`);
 
-    fs.readFile(entityJsonFile, "utf8", function (err, fileContent) {
-      const parsedFileContent = JSON.parse(fileContent);
-      const data = {
-        attributes: Object.keys(parsedFileContent).map((item) => {
-          // console.log('callweoif',{name: item,
-          //   ...parsedFileContent[`${item}`]}, parsedFileContent);
-          return {
-            name: item,
-            ...parsedFileContent[`${item}`],
-          };
-        }),
-        entityName,
-      };
+    const data = {
+      attributes: Object.keys(entityDefinition.fields).map((item) => {
+        return {
+          name: item,
+          ...entityDefinition.fields[`${item}`],
+        };
+      }),
+      entityName,
+      aditionals: entityDefinition.aditionals,
+    };
 
-      if (err) throw err;
-
-      [
-        {
-          template: formTemplate,
-          fileToBeGenerated: generatedEntityForm,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the form component \n${generatedEntityForm}\n`,
-          ],
-        },
-        {
-          template: listTemplate,
-          fileToBeGenerated: generatedEntityList,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the list component \n${generatedEntityList}\n`,
-          ],
-        },
-        {
-          template: apiTemplate,
-          fileToBeGenerated: generatedEntityApi,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the service file \n${generatedEntityApi}\n`,
-          ],
-        },
-        {
-          template: actionTemplate,
-          fileToBeGenerated: generatedEntityAction,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the action \n${generatedEntityAction}\n`,
-          ],
-        },
-        {
-          template: storeIndexTemplate,
-          fileToBeGenerated: generatedStoreIndex,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the store index \n${generatedStoreIndex}\n`,
-          ],
-        },
-        {
-          template: CrudIndexTemplate,
-          fileToBeGenerated: generatedEntityCrudIndex,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the crud index template \n${generatedEntityCrudIndex}\n`,
-          ],
-        },
-        {
-          template: routesTemplate,
-          fileToBeGenerated: generatedRoutes,
-          logs: [
-            `${chalk.bgBlue(
-              "[Note]: "
-            )} location of the routes.js \n${generatedRoutes}\n`,
-          ],
-        },
-      ].forEach(({ template, fileToBeGenerated, logs }) => {
-        ejs.renderFile(template, data, options, function (err, str) {
-          if (err) throw err;
-          fs.ensureFileSync(fileToBeGenerated);
-          fs.outputFileSync(fileToBeGenerated, str);
-          logs.forEach((log) => {
-            console.log(log);
-          });
+    [
+      {
+        template: formTemplate,
+        fileToBeGenerated: generatedEntityForm,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the form component \n${generatedEntityForm}\n`,
+        ],
+      },
+      {
+        template: listTemplate,
+        fileToBeGenerated: generatedEntityList,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the list component \n${generatedEntityList}\n`,
+        ],
+      },
+      {
+        template: apiTemplate,
+        fileToBeGenerated: generatedEntityApi,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the service file \n${generatedEntityApi}\n`,
+        ],
+      },
+      {
+        template: actionTemplate,
+        fileToBeGenerated: generatedEntityAction,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the action \n${generatedEntityAction}\n`,
+        ],
+      },
+      {
+        template: storeIndexTemplate,
+        fileToBeGenerated: generatedStoreIndex,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the store index \n${generatedStoreIndex}\n`,
+        ],
+      },
+      {
+        template: CrudIndexTemplate,
+        fileToBeGenerated: generatedEntityCrudIndex,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the crud index template \n${generatedEntityCrudIndex}\n`,
+        ],
+      },
+      {
+        template: routesTemplate,
+        fileToBeGenerated: generatedRoutes,
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the routes.js \n${generatedRoutes}\n`,
+        ],
+      },
+    ].forEach(({ template, fileToBeGenerated, logs }) => {
+      ejs.renderFile(template, data, options, function (err, str) {
+        if (err) throw err;
+        fs.ensureFileSync(fileToBeGenerated);
+        fs.outputFileSync(fileToBeGenerated, str);
+        logs.forEach((log) => {
+          console.log(log);
         });
       });
-
-      // extra files that has no template
-      fs.outputFileSync(
-        generatedTemplateIndex,
-        "export { default as routes } from './routes'\n"
-      );
     });
+
+    // extra files that has no template
+    fs.outputFileSync(
+      generatedTemplateIndex,
+      "export { default as routes } from './routes'\n"
+    );
+
     await sleep(1000);
     const spinner = createSpinner(
       "generating templates, store and service files...\n\n"
