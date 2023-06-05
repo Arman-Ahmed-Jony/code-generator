@@ -1,10 +1,15 @@
 import Api from 'services/<%=entityName %>Service'
 
 export default {
-  async getAll (payload) {
+  async getAll (payload = {}) {
     try {
-      const { data: { data } } = await Api.getAll(payload)
+      const { data } = await Api.getAll(payload);
+      <% if(aditionals.includes('pagination')) { %>
+      this.<%=entityName %>s = data.data;
+      <%} else {%>
       this.<%=entityName %>s = data
+      <% } %>
+      return Promise.resolve(data);
     } catch (error) {}
   },
   async getById (payload) {
