@@ -1,0 +1,52 @@
+
+{
+    "fields": [
+        {
+            "name": "name",
+            "type": "string",
+            "system": false
+        },
+        {
+            "name": "age",
+            "type": "integer",
+            "system": false
+        },
+        {
+            "name": "owner_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "tenant_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "is_active",
+            "type": "boolean#default"
+        },
+        {
+            "name": "sort_order",
+            "type": "integer"
+        }
+    ],
+    "foreign_keys": [
+        {
+            "column": "tenant_id",
+            "references": "id",
+            "on": "tenants",
+            "onDelete": "cascade"
+        },
+        {
+            "column": "owner_id",
+            "references": "id",
+            "on": "users",
+            "onDelete": "cascade"
+        }
+    ],
+    "relationships": [
+        {
+            "name": "owner",
+            "type": "belongsTo",
+            "class": "App\\Models\\User"
+        }
+    ]
+}

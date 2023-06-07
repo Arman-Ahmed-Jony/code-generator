@@ -2,15 +2,23 @@
 import inquirer from "inquirer";
 import fs from "fs-extra";
 import ejs from "ejs";
-import yargsParser from "yargs-parser";
 import path from "path";
 import * as url from "url";
 import { createSpinner } from "nanospinner";
 import chalk from "chalk";
-import { companyASCII, sleep } from "./utils/utilities.js";
+import { companyASCII, getTypeCategory, sleep } from "./utils/utilities.js";
+import yargs from 'yargs'
+import {hideBin} from 'yargs/helpers'
+
+
+const argv = yargs(hideBin(process.argv)).argv;
+const jsonFilePath = argv.json
+
+const providedJsonConfigFile = () => {
+  return fs.existsSync(jsonFilePath) && path.extname(jsonFilePath)=== '.json';
+}
 
 const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
-const argv = yargsParser(process.argv.slice(2));
 const workingDir = path.join(process.cwd()); // in developemnt use 'generated'
 
 const entityDefinition = {
@@ -114,12 +122,35 @@ const greetings = async () => {
   console.log(companyASCII);
 };
 
+
 const main = async () => {
-  await greetings();
-  await sleep(1000);
-  await getEntityName();
-  await getFields();
-  await generateEntityJson();
+  if (providedJsonConfigFile()) {
+    console.log(jsonFilePath);
+    try {
+      const data = fs.readFileSync(jsonFilePath, 'utf8')
+      const _data = JSON.parse(data);
+      entityDefinition.name = path.parse(jsonFilePath).name.toLowerCase()
+      entityDefinition.aditionals = ['pagination', 'filter'] // by default pagination and filter is added 
+      entityDefinition.fields = _data.fields
+                                      .filter(field => typeof field.system === 'boolean' && !field.system)
+                                      .reduce((acc, cur) => {
+                                        acc[cur.name] = {
+                                          type: getTypeCategory(cur.type.split('#')[0]),
+                                          required: true
+                                        }
+                                        return acc
+                                      }, {})
+    } catch (error) {
+      
+    }
+  } else {
+    await greetings();
+    await sleep(1000);
+    await getEntityName();
+    await getFields();
+    await generateEntityJson();
+  }
+  
 
   try {
     const options = {};
