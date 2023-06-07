@@ -5,6 +5,10 @@ import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>Form from '../compone
 import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>List from '../components/<%=entityName.replace(/\w/, c => c.toUpperCase())%>List.vue'
 import { useCommonStore } from 'src/stores/common-store'
 import { useBackButton } from 'src/composables/backButton'
+<% if(aditionals.includes('filter')) { %>
+import HeaderAppend from 'src/global-components/HeaderAppend.vue'
+import <%=entityName.replace(/\w/, c => c.toUpperCase()) %>Filter from '../components/<%=entityName.replace(/\w/, c => c.toUpperCase()) %>Filter.vue'
+<% } %>
 <% if(aditionals.includes('pagination')) { %>
 import { useCriteria } from 'src/composables/criteria.js'
 <% } %>
@@ -40,6 +44,13 @@ const handleDelete = (id) => {
   <%=entityName %>Store.deleteById(id)
 }
 
+<% if(aditionals.includes('filter')) { %>
+const handleFilter = (filter) => {
+  criteria.value.query.filters = filter
+  callApi()
+}
+<% } %>
+
 <% if(aditionals.includes('pagination')) { %>
 const { criteria, updateCriteria } = useCriteria({
   current: 1,
@@ -68,6 +79,11 @@ onMounted(() => {
 </script>
 <template>
   <q-page padding>
+    <% if(aditionals.includes('filter')) { %>
+    <HeaderAppend>
+      <tenant-filter @submit="handleFilter" />
+    </HeaderAppend>
+    <% } %>
     <content-loader :loading="commonStore.fetching">
       <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>List
         v-model="<%=entityName %>s"

@@ -1,0 +1,140 @@
+<script setup>
+  import { computed, ref } from 'vue'
+  
+  const emit = defineEmits([
+    'submit'
+  ])
+  
+  const initialFilter = {
+    <% for (const arg of attributes) { -%>
+      <%= arg.name %>: {
+      op: 'contains',
+      val: ''
+    },
+    <% } -%>
+    created_at: {
+      op: 'between',
+      type: 'date',
+      val: '',
+      val2: ''
+    }
+  }
+  const filter = ref({
+    ...JSON.parse(JSON.stringify(initialFilter))
+  })
+  
+  const nonEmptyFilters = computed(() => {
+    const _filter = JSON.parse(JSON.stringify(filter.value))
+    Object.keys(_filter).forEach(key => {
+      if (!_filter[key].val) delete _filter[key]
+    })
+    return _filter
+  })
+  const onSubmit = () => {
+    emit('submit', nonEmptyFilters)
+  }
+  const onReset = () => {
+    filter.value = {
+      ...JSON.parse(JSON.stringify(initialFilter))
+    }
+    emit('submit', nonEmptyFilters)
+  }
+  
+  const setCreatedAtFilter = (data) => {
+    if (data) {
+      if (typeof data === 'string') {
+        filter.value.created_at.val = filter.value.created_at.val2 = data
+        return
+      }
+      filter.value.created_at.val = data.from
+      filter.value.created_at.val2 = data.to
+    }
+  }
+</script>
+<template>
+  <q-btn
+    icon="filter_alt"
+    round
+    dense
+    flat
+  >
+    <q-menu
+      anchor="bottom middle"
+      self="top right"
+    >
+      <q-form
+        @submit="onSubmit"
+        @reset="onReset"
+        class="q-gutter-md"
+      >
+        <q-card style="width: 250px;">
+          <q-card-section class="col q-gutter-sm">
+            <% for (const arg of attributes) { -%>
+              <% if(arg.type == 'number') { %>
+                <q-input
+                  v-model.number="filter.<%= arg.name %>.val"
+                  label="<%= arg.name %>"
+                  type="number"
+                />
+              <% } else { %>
+                <q-input
+                  label="<%= arg.name %>"
+                  v-model="filter.<%= arg.name %>.val"
+                  type="text"
+                />
+              <% } -%>
+            <% } -%>
+            <q-input
+              :model-value="[filter.created_at.val, filter.created_at.val2].filter(val => val).join(' to ')"
+              label="created at"
+              readonly
+            >
+              <template #append>
+                <q-icon
+                  name="event"
+                  class="cursor-pointer"
+                >
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                  >
+                    <q-date
+                      :model-value="{from: filter.created_at.val, to: filter.created_at.val2}"
+                      @update:model-value="setCreatedAtFilter"
+                      mask="DD-MM-YYYY"
+                      range
+                    >
+                      <div class="row items-center justify-end">
+                        <q-btn
+                          v-close-popup
+                          label="Close"
+                          color="primary"
+                          flat
+                        />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </q-card-section>
+          <q-card-section>
+            <q-btn
+              label="Filter"
+              type="submit"
+              color="primary"
+            />
+            <q-btn
+              label="Reset"
+              type="reset"
+              color="primary"
+              flat
+              class="q-ml-sm"
+            />
+          </q-card-section>
+        </q-card>
+      </q-form>
+    </q-menu>
+  </q-btn>
+</template>

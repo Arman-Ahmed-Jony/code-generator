@@ -131,6 +131,12 @@ const main = async () => {
         .charAt(0)
         .toUpperCase()}${entityName.slice(1)}Form.vue`
     );
+    const generatedFilter = path.join(
+      workingDir,
+      `./src/modules/${entityName}s/components/${entityName
+        .charAt(0)
+        .toUpperCase()}${entityName.slice(1)}Filter.vue`
+    );
     const generatedEntityList = path.join(
       workingDir,
       `./src/modules/${entityName}s/components/${entityName
@@ -165,6 +171,7 @@ const main = async () => {
     );
 
     const formTemplate = path.join(__dirname, `./templates/form.ejs`);
+    const filterTemplate = path.join(__dirname, `./templates/filter.ejs`);
     const listTemplate = path.join(__dirname, `./templates/list.ejs`);
     const apiTemplate = path.join(__dirname, `./templates/api.ejs`);
     const actionTemplate = path.join(__dirname, `./templates/actions.ejs`);
@@ -190,6 +197,7 @@ const main = async () => {
       {
         template: formTemplate,
         fileToBeGenerated: generatedEntityForm,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -197,8 +205,19 @@ const main = async () => {
         ],
       },
       {
+        template: filterTemplate,
+        fileToBeGenerated: generatedFilter,
+        generate: entityDefinition.aditionals.includes('filter'),
+        logs: [
+          `${chalk.bgBlue(
+            "[Note]: "
+          )} location of the filter component \n${generatedFilter}\n`,
+        ],
+      },
+      {
         template: listTemplate,
         fileToBeGenerated: generatedEntityList,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -208,6 +227,7 @@ const main = async () => {
       {
         template: apiTemplate,
         fileToBeGenerated: generatedEntityApi,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -217,6 +237,7 @@ const main = async () => {
       {
         template: actionTemplate,
         fileToBeGenerated: generatedEntityAction,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -226,6 +247,7 @@ const main = async () => {
       {
         template: storeIndexTemplate,
         fileToBeGenerated: generatedStoreIndex,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -235,6 +257,7 @@ const main = async () => {
       {
         template: CrudIndexTemplate,
         fileToBeGenerated: generatedEntityCrudIndex,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
@@ -244,13 +267,16 @@ const main = async () => {
       {
         template: routesTemplate,
         fileToBeGenerated: generatedRoutes,
+        generate: true,
         logs: [
           `${chalk.bgBlue(
             "[Note]: "
           )} location of the routes.js \n${generatedRoutes}\n`,
         ],
       },
-    ].forEach(({ template, fileToBeGenerated, logs }) => {
+    ]
+    .filter(item => item.generate)
+    .forEach(({ template, fileToBeGenerated, logs }) => {
       ejs.renderFile(template, data, options, function (err, str) {
         if (err) throw err;
         fs.ensureFileSync(fileToBeGenerated);
