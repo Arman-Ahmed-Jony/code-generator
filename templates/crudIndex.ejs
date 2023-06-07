@@ -81,7 +81,7 @@ onMounted(() => {
   <q-page padding>
     <% if(aditionals.includes('filter')) { %>
     <HeaderAppend>
-      <tenant-filter @submit="handleFilter" />
+      <<%=entityName.replace(/\w/, c => c.toUpperCase()) %>Filter @submit="handleFilter" />
     </HeaderAppend>
     <% } %>
     <content-loader :loading="commonStore.fetching">
