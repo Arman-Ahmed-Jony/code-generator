@@ -141,7 +141,7 @@ const main = async () => {
                                         return acc
                                       }, {})
     } catch (error) {
-      
+      console.error(error);
     }
   } else {
     await greetings();
