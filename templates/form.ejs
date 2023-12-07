@@ -44,6 +44,9 @@ emit('submit', form.value)
         v-model="form.<%= arg.name %>"
         placeholder="Type <%= arg.name %>"
         type="text"
+        class="itc-input"
+        outlined
+        dense 
         <% if(arg.required) { %>
         :rules="[(val) => !!val || 'Field is required']"
         <% }%>
@@ -55,6 +58,9 @@ emit('submit', form.value)
         label="<%= arg.name %>"
         placeholder="Type <%= arg.name %>"
         type="number"
+        class="itc-input"
+        outlined
+        dense 
         <% if(arg.required) { %>
         :rules="[
           val => !!val || 'Field is required'
@@ -68,6 +74,9 @@ emit('submit', form.value)
         label="<%= arg.name %>"
         placeholder="Type <%= arg.name %>"
         type="email"
+        class="itc-input"
+        outlined
+        dense 
         <% if(arg.required) { %>
         :rules="[
           val => !val || validateEmail(val) || 'Type a valid Email'
@@ -81,6 +90,9 @@ emit('submit', form.value)
         label="<%= arg.name %>"
         placeholder="Type <%= arg.name %>"
         mask="date"
+        class="itc-input"
+        outlined
+        dense 
         <% if(arg.required) { %>
         :rules="[
           'date',
@@ -119,6 +131,9 @@ emit('submit', form.value)
         label="<%= arg.name %>"
         placeholder="Type <%= arg.name %>"
         type="password"
+        class="itc-input"
+        outlined
+        dense 
         <% if(arg.required) { %>
           :rules="[
             val => !!val || 'Field is required'
