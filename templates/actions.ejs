@@ -5,7 +5,7 @@ export default {
     try {
       const { data } = await Api.getAll(payload);
       <% if(aditionals.includes('pagination')) { %>
-      this.<%=entityName %>s = data.data;
+      this.<%=entityName %>s = data.data.data;
       <%} else {%>
       this.<%=entityName %>s = data
       <% } %>
