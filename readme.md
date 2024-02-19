@@ -5,7 +5,7 @@ The Quasar CRUD Generator simplifies the process of creating CRUD (Create, Read,
 2. ***List Component :*** Displays a list of entities.
 3. ***Header Filter (optional) :*** Allows filtering entities.
 4. ***Pagination (optional) :*** Provides pagination controls.
-5. ***Store, Actions, and Services :*** Sets up the necessary Vuex store and actions.
+5. ***Store, Actions, and Services :*** Sets up the necessary Pinia store and actions.
 
 Users can create a CRUD setup using a command-line prompt, which is self-intuitive. Alternatively, you can provide an entity JSON file as an argument.
 
