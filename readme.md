@@ -17,7 +17,7 @@ Users can create a CRUD setup using a command-line prompt, which is self-intuiti
 
 ``` npm run generate -- --json=Books.json ```
 
-Below is an example of a backend-generated entity JSON. Note that fields with "system": false are automatically generated:
+Below is an example of a backend-generated entity JSON. Note that fields with ***"system": false*** will be treated as attributes of the entity ***Books***:
 
 ``` 
 {
